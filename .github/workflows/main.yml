@@ -2,14 +2,12 @@ name: Auto Scrape & Paraphrase News
 
 on:
   schedule:
-    # Berjalan otomatis setiap 6 jam sekali
     - cron: '0 */6 * * *'
-  workflow_dispatch: # Memungkinkan dijalankan manual lewat tab Actions
+  workflow_dispatch:
 
 permissions:
   contents: write
 
-# Mencegah dua workflow saling menabrak saat commit & push bersamaan
 concurrency:
   group: repo-update-lock
   cancel-in-progress: false
@@ -41,8 +39,13 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           
-          # Menambahkan database, seluruh file indeks/paginasi, sitemap, rss, dan folder /artikel/
-          git add database.sqlite index.html page*.html sitemap.xml robots.txt feed.xml artikel/ 2>/dev/null || true
+          # Cek status file yang berubah sebelum di-add
+          git status
+          
+          # Paksa tambahkan seluruh file dan folder artikel
+          git add -A
+          
+          git status
           
           if ! git diff --staged --quiet; then
             git commit -m "Auto update news, HTML, sitemap, and RSS"

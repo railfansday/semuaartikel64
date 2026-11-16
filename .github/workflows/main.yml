@@ -40,10 +40,13 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add database.sqlite index.html page2.html sitemap.xml robots.txt feed.xml 2>/dev/null || true
+          
+          # Menambahkan database, seluruh file indeks/paginasi, sitemap, rss, dan folder /artikel/
+          git add database.sqlite index.html page*.html sitemap.xml robots.txt feed.xml artikel/ 2>/dev/null || true
+          
           if ! git diff --staged --quiet; then
             git commit -m "Auto update news, HTML, sitemap, and RSS"
-            git pull --rebase -X ours --autostash origin main
+            git pull --rebase -X ours --autostash origin main || true
             git push origin main
           else
             echo "Tidak ada file baru atau perubahan untuk di-push."
